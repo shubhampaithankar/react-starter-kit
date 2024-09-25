@@ -1,8 +1,8 @@
 import { Question } from '../utils/types'
 
 const redux: Question = {
-    type: 'confirm',
     name: 'redux',
+    type: 'confirm',
     message: 'Would you like to include Redux?',
     default: false,
 }

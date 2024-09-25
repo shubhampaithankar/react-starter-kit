@@ -1,8 +1,8 @@
 import { Question } from '../utils/types'
 
 const cssFrameWork: Question = {
-    type: 'list',
     name: 'cssFramework',
+    type: 'list',
     message: 'Select a CSS framework:',
     choices: [
         'Tailwind CSS',
