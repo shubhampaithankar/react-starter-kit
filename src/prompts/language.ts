@@ -1,7 +1,7 @@
 import { Question } from '../utils/types'
 
 const language: Question = {
-    name: 'langauge',
+    name: 'language',
     type: 'list',
     message: 'Choose language:',
     choices: ['JavaScript', 'TypeScript'],
