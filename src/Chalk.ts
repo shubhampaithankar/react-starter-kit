@@ -1,21 +1,11 @@
-import {
-    green,
-    blue,
-    red,
-    grey,
-    yellow,
-    white,
-    cyan,
-    black,
-    magenta,
-} from 'chalk'
+import { green, blue, red, grey, yellow, white, cyan, black, magenta } from 'chalk'
 
-export const chalkGreen = (str: string) => console.log(green(str))
-export const chalkRed = (str: string) => console.log(red(str))
-export const chalkBlue = (str: string) => console.log(blue(str))
-export const chalkYellow = (str: string) => console.log(yellow(str))
-export const chalkGrey = (str: string) => console.log(grey(str))
-export const chalkWhite = (str: string) => console.log(white(str))
-export const chalkCyan = (str: string) => console.log(cyan(str))
-export const chalkBlack = (str: string) => console.log(black(str))
-export const chalkMagenta = (str: string) => console.log(magenta(str))
+export const chalkGreen = (...str: any[]) => console.log(green(str[0]), str[1] ? str[1] : '')
+export const chalkRed = (...str: any[]) => console.log(red(str[0]), str[1] ? str[1] : '')
+export const chalkBlue = (...str: any[]) => console.log(blue(str[0]), str[1] ? str[1] : '')
+export const chalkYellow = (...str: any[]) => console.log(yellow(str[0]), str[1] ? str[1] : '')
+export const chalkGrey = (...str: any[]) => console.log(grey(str[0]), str[1] ? str[1] : '')
+export const chalkWhite = (...str: any[]) => console.log(white(str[0]), str[1] ? str[1] : '')
+export const chalkCyan = (...str: any[]) => console.log(cyan(str[0]), str[1] ? str[1] : '')
+export const chalkBlack = (...str: any[]) => console.log(black(str[0]), str[1] ? str[1] : '')
+export const chalkMagenta = (...str: any[]) => console.log(magenta(str[0]), str[1] ? str[1] : '')
