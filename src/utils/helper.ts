@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { CheerioAPI, load } from 'cheerio'
 
 import { DevDependency, ModifiedData, PackageJson } from './types'
@@ -34,7 +34,7 @@ export function editFile(filePath: string, callback: (data: string) => ModifiedD
         writeFileSync(filePath, modifiedData, 'utf-8')
     })
 
-    if (error) chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
 }
 
 export function editHtmlFileDom(filePath: string, callback: (data: CheerioAPI) => unknown) {
@@ -61,7 +61,20 @@ export function editReactFiles(filePath: string, content: string) {
         editFile(filePath, () => content)
     })
 
-    if (error) chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
+}
+
+// delete file if it exists
+export function deleteFile(filePath: string) {
+    const [error, data] = tryCatch(() => {
+        if (!existsSync(filePath.toLowerCase())) throw new Error('File does not exist')
+        else {
+            unlinkSync(filePath)
+            return true
+        }
+    })
+
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
 }
 
 export function addPackage(dependency: string, version: string = 'latest', devDependencies: DevDependency[]) {
@@ -86,6 +99,6 @@ export function addPackage(dependency: string, version: string = 'latest', devDe
         return true
     })
 
-    if (error) return chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
     if (data) return chalkGreen(`Dependency ${dependency}@${version} added to package.json successfully`)
 }

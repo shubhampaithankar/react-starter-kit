@@ -1,5 +1,5 @@
 import degit from 'degit'
-import { editHtmlFileDom, tryCatch, editFile } from '../utils/helper'
+import { editHtmlFileDom, tryCatch, editFile, editReactFiles, deleteFile } from '../utils/helper'
 import { chalkGreen, chalkRed } from '../Chalk'
 import { PackageJson } from '../utils/types'
 
@@ -14,12 +14,15 @@ export default async function createViteTemplate(appName: string, language: stri
         await repo.clone(appName)
         process.chdir(appName)
 
+        const extension = ts ? 'ts' : 'js'
+        const jsxExtension = `${extension}x`
+
         // edit title in index.html to set it to the app name
         editHtmlFileDom('index.html', ($) => {
             $('title').text(appName)
         })
 
-        // todo: edit package.json to set the app name and description
+        // edit package.json to set the app name and description
         editFile('package.json', (content) => {
             const packageJson: PackageJson = JSON.parse(content)
             // check for white spaces and replace them with -
@@ -33,12 +36,20 @@ export default async function createViteTemplate(appName: string, language: stri
         editFile('README.md', () => readMe())
         chalkGreen(`README.md updated successfully`)
 
-        const extension = ts ? 'ts' : 'js'
-        const jsxExtension = `${extension}x`
+        /* Make changes in src directory */
+        process.chdir('src')
 
         // edit App.jsx to set the app name and extension
-        // editFile('src/App.' + jsxExtension, (content) => app(appName))
-        // chalkGreen(`App.${extension} updated successfully`)
+        editReactFiles(`App.${jsxExtension}`, app(appName))
+        chalkGreen(`App.${extension} updated successfully`)
+
+        // delete App.css
+        deleteFile('App.css')
+        chalkGreen(`App.css deleted successfully`)
+
+        // clear index.css
+        editFile('index.css', () => '')
+        chalkGreen(`index.css cleared successfully`)
 
         return true
     })
@@ -49,8 +60,7 @@ export default async function createViteTemplate(appName: string, language: stri
 // my readme.md in markdown language
 const readMe = () => ``
 
-const app = (appName: string) =>
-    `export default function createViteTemplate() {
+const app = (appName: string) => `export default function createViteTemplate() {
   return (
     <h1>
       ${appName}
