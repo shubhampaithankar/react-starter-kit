@@ -1,19 +1,11 @@
 import { Question } from '../utils/types'
 
-const cssFrameWork: Question = {
+const cssFramework: Question = {
     name: 'cssFramework',
     type: 'list',
     message: 'Select a CSS framework:',
-    choices: [
-        'Tailwind CSS',
-        'Bootstrap',
-        // 'Material UI',
-        // 'Ant Design',
-        // 'Chakra UI',
-        // 'Styled Components',
-        'Vanilla CSS',
-    ],
-    default: 'Vanilla CSS',
+    choices: ['Tailwind', 'Bootstrap', 'Vanilla'],
+    default: 'Vanilla',
 }
 
-export default cssFrameWork
+export default cssFramework
