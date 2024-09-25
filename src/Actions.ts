@@ -1,3 +1,4 @@
 import inquirer from 'inquirer'
+import { appName, language } from './prompts'
 
-export const answers = async () => await inquirer.prompt([])
+export const action = async () => await inquirer.prompt([appName, language])
