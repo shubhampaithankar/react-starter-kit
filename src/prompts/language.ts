@@ -5,6 +5,7 @@ const language: Question = {
     type: 'list',
     message: 'Choose language:',
     choices: ['JavaScript', 'TypeScript'],
+    default: 'JavaScript',
 }
 
 export default language
