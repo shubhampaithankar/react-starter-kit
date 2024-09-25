@@ -1,9 +1,12 @@
 {
   "name": "shubham-react",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev": "node --watch -r ts-node/register index.ts",
+    "start": "npm run build && node -r ts-node/register index.ts"
   },
   "keywords": [],
   "author": "",
