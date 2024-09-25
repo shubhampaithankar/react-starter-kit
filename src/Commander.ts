@@ -5,8 +5,10 @@ import { createViteTemplate } from './actions/'
 import { tryCatch } from './utils/helper'
 
 export default class Commader extends Command {
+    appName: string = ''
     constructor() {
         super()
+        this.appName = 'my-app'
     }
 
     async init() {
@@ -21,6 +23,8 @@ export default class Commader extends Command {
                     // Create vite template
                     chalkGreen(`Creating app ${appName} with ${language}`)
                     createViteTemplate(appName, language)
+
+                    this.appName = appName
                 })
         })
         if (error) return chalkRed('There was an error in Commander.init()')
