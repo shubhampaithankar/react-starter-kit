@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs'
-import { DevDependency, ModifiedData } from './types'
+import { DevDependency, ModifiedData, PackageJson } from './types'
 import { chalkGreen, chalkRed } from '../Chalk'
 import { CheerioAPI, load } from 'cheerio'
 
@@ -54,7 +54,7 @@ export function editHtmlFileDom(filePath: string, callback: (data: CheerioAPI) =
 export function addPackage(dependency: string, version: string = 'latest', devDependencies: DevDependency[]) {
     const [error, data] = tryCatch(() => {
         editFile('package.json', (content) => {
-            const packageJson = JSON.parse(content)
+            const packageJson: PackageJson = JSON.parse(content)
 
             // Ensure the dependency type exists
             if (!packageJson['dependencies']) packageJson['dependencies'] = {}
@@ -65,7 +65,7 @@ export function addPackage(dependency: string, version: string = 'latest', devDe
 
             // Add the dev dependencies
             devDependencies.forEach(({ dev, version }) => {
-                packageJson['devDependencies'][dev] = version
+                packageJson['devDependencies']![dev] = version
             })
 
             return JSON.stringify(packageJson, null, 2)
