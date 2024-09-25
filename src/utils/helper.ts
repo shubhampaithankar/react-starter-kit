@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { DevDependency, ModifiedData } from './types'
 import { chalkGreen, chalkRed } from '../Chalk'
+import { CheerioAPI, load } from 'cheerio'
 
 export const tryCatch = <T>(callback: () => T | Promise<T>): [Error | null, T | null] => {
     let resolvedValue: [Error | null, T | null] = [null, null]
@@ -35,11 +36,22 @@ export function editFile(filePath: string, callback: (data: string) => ModifiedD
     if (error) chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
 }
 
-export async function addPackage(
-    dependency: string,
-    version: string | undefined = 'latest',
-    devDependencies: DevDependency[]
-) {
+export function editHtmlFileDom(filePath: string, callback: (data: CheerioAPI) => unknown) {
+    const [error, data] = tryCatch(() => {
+        const data = readFileSync(filePath, 'utf8')
+        const $ = load(data)
+        callback($)
+
+        const modifiedData = $.html()
+        writeFileSync(filePath, modifiedData, 'utf8')
+        return true
+    })
+
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
+    if (data) return chalkGreen(`${filePath} updated successfully`)
+}
+
+export function addPackage(dependency: string, version: string = 'latest', devDependencies: DevDependency[]) {
     const [error, data] = tryCatch(() => {
         editFile('package.json', (content) => {
             const packageJson = JSON.parse(content)
@@ -58,6 +70,7 @@ export async function addPackage(
 
             return JSON.stringify(packageJson, null, 2)
         })
+        return true
     })
 
     if (error) return chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
