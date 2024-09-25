@@ -4,7 +4,7 @@ import { chalkGreen, chalkRed } from '../Chalk'
 import { PackageJson } from '../utils/types'
 
 export default async function createViteTemplate(appName: string, language: string) {
-    const [error, data] = tryCatch(async () => {
+    const [error, done] = tryCatch(async () => {
         const ts = language === 'TypeScript'
         const viteTemplate = ts ? 'template-react-ts' : 'template-react'
 
@@ -30,31 +30,29 @@ export default async function createViteTemplate(appName: string, language: stri
             packageJson.name = name
             return JSON.stringify(packageJson, null, 2)
         })
-        chalkGreen(`package.json updated successfully`)
 
         // clear readme.md and add my custom readme
-        editFile('README.md', () => readMe())
-        chalkGreen(`README.md updated successfully`)
+        editFile('README.md', () => '')
 
         /* Make changes in src directory */
         process.chdir('src')
 
         // edit App.jsx to set the app name and extension
         editReactFiles(`App.${jsxExtension}`, app(appName))
-        chalkGreen(`App.${extension} updated successfully`)
 
         // delete App.css
         deleteFile('App.css')
-        chalkGreen(`App.css deleted successfully`)
 
         // clear index.css
         editFile('index.css', () => '')
-        chalkGreen(`index.css cleared successfully`)
+
+        /* once done making changes in src directory go back*/
+        process.chdir('..')
 
         return true
     })
 
-    if (error) return chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
 }
 
 // my readme.md in markdown language

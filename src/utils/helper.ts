@@ -28,17 +28,34 @@ export const tryCatch = <T>(callback: () => T | Promise<T>): [Error | null, T | 
 }
 
 export function editFile(filePath: string, callback: (data: string) => ModifiedData) {
-    const [error, data] = tryCatch(() => {
+    const [error, done] = tryCatch(() => {
         const data = readFileSync(filePath, 'utf-8')
         const modifiedData = callback(data)
         writeFileSync(filePath, modifiedData, 'utf-8')
+        return true
     })
 
     if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
+    if (done) return chalkGreen(`${filePath} edited successfully`)
 }
 
+// delete file if it exists
+export function deleteFile(filePath: string) {
+    const [error, done] = tryCatch(() => {
+        if (!existsSync(filePath.toLowerCase())) throw new Error('File does not exist')
+        else {
+            unlinkSync(filePath)
+            return true
+        }
+    })
+
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
+    if (done) return chalkGreen(`${filePath} deleted successfully`)
+}
+
+// edit html dom
 export function editHtmlFileDom(filePath: string, callback: (data: CheerioAPI) => unknown) {
-    const [error, data] = tryCatch(() => {
+    const [error, done] = tryCatch(() => {
         const data = readFileSync(filePath, 'utf8')
         const $ = load(data)
         callback($)
@@ -49,13 +66,13 @@ export function editHtmlFileDom(filePath: string, callback: (data: CheerioAPI) =
     })
 
     if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
-    if (data) return chalkGreen(`${filePath} updated successfully`)
+    if (done) return chalkGreen(`${filePath} edited successfully`)
 }
 
 // todo: add react serializer
 // todo: use react serializer to edit react files
 export function editReactFiles(filePath: string, content: string) {
-    const [error, data] = tryCatch(() => {
+    const [error, done] = tryCatch(() => {
         // if file doesnt exist create one
         if (!existsSync(filePath.toLowerCase())) writeFileSync(filePath, '')
         editFile(filePath, () => content)
@@ -64,21 +81,8 @@ export function editReactFiles(filePath: string, content: string) {
     if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
 }
 
-// delete file if it exists
-export function deleteFile(filePath: string) {
-    const [error, data] = tryCatch(() => {
-        if (!existsSync(filePath.toLowerCase())) throw new Error('File does not exist')
-        else {
-            unlinkSync(filePath)
-            return true
-        }
-    })
-
-    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
-}
-
 export function addPackage(dependency: string, version: string = 'latest', devDependencies: DevDependency[]) {
-    const [error, data] = tryCatch(() => {
+    const [error, done] = tryCatch(() => {
         editFile('package.json', (content) => {
             const packageJson: PackageJson = JSON.parse(content)
 
@@ -100,5 +104,5 @@ export function addPackage(dependency: string, version: string = 'latest', devDe
     })
 
     if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
-    if (data) return chalkGreen(`Dependency ${dependency}@${version} added to package.json successfully`)
+    if (done) return chalkGreen(`Dependency ${dependency}@${version} added to package.json successfully`)
 }

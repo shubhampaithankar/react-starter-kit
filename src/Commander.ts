@@ -1,6 +1,6 @@
 import { Command } from 'commander'
 import { action } from './Actions'
-import { chalkGreen, chalkRed } from './Chalk'
+import { chalkBlue, chalkGreen, chalkRed } from './Chalk'
 import { createViteTemplate } from './actions/'
 import { tryCatch } from './utils/helper'
 
@@ -12,7 +12,7 @@ export default class Commader extends Command {
     }
 
     async init() {
-        const [error] = tryCatch(() => {
+        const [error, done] = tryCatch(() => {
             super
                 .version('0.0.1')
                 .description('CLI to automate react project development with support for additional dependacies')
@@ -21,12 +21,14 @@ export default class Commader extends Command {
                     const { appName, language } = answers
 
                     // Create vite template
-                    chalkGreen(`Creating app ${appName} with ${language}`)
+                    chalkBlue(`Pulling vite app with name ${appName} in ${language}`)
                     createViteTemplate(appName, language)
 
                     this.appName = appName
                 })
+            return true
         })
         if (error) return chalkRed('There was an error in Commander.init()')
+        if (done) return chalkGreen(`cd ${this.appName} && npm install`)
     }
 }
