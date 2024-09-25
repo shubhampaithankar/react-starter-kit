@@ -1,6 +1,7 @@
 import { Command } from 'commander'
 import { action } from './Actions'
 import { chalkGreen } from './Chalk'
+import { createViteTemplate } from './actions/'
 
 export default class Commader extends Command {
     constructor() {
@@ -16,7 +17,10 @@ export default class Commader extends Command {
             .action(async () => {
                 const answers = await action()
                 const { appName, language } = answers
+
+                // Create vite template
                 chalkGreen(`Creating app ${appName} with ${language}`)
+                createViteTemplate(appName, language)
             })
     }
 }
