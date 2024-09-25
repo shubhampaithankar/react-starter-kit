@@ -1,6 +1,7 @@
-import { BuiltInQuestion } from 'inquirer/dist/cjs/types/types'
+import { Question } from '../utils/types'
 
-const appName: BuiltInQuestion = {
+const appName: Question = {
+    name: 'appName',
     type: 'input',
     message: 'Enter your app name:',
     default: 'my-app',

@@ -1,6 +1,7 @@
-import { BuiltInQuestion } from 'inquirer/dist/cjs/types/types'
+import { Question } from '../utils/types'
 
-const language: BuiltInQuestion = {
+const language: Question = {
+    name: 'langauge',
     type: 'list',
     message: 'Choose language:',
     choices: ['JavaScript', 'TypeScript'],
