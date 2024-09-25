@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "rimraf ./dist && tsc",
     "dev": "node --watch -r ts-node/register index.ts",
     "start": "npm run build && node -r ts-node/register index.ts",
     "lint": "eslint"
@@ -34,6 +34,7 @@
     "cheerio": "^1.0.0",
     "commander": "^12.1.0",
     "degit": "^2.8.4",
-    "inquirer": "^11.0.2"
+    "inquirer": "^11.0.2",
+    "rimraf": "^6.0.1"
   }
 }
