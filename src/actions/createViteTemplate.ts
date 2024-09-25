@@ -1,6 +1,7 @@
 import degit from 'degit'
 import { editHtmlFileDom, tryCatch, editFile } from '../utils/helper'
 import { chalkGreen, chalkRed } from '../Chalk'
+import { PackageJson } from '../utils/types'
 
 export default async function createViteTemplate(appName: string, language: string) {
     const [error, data] = tryCatch(async () => {
@@ -19,6 +20,14 @@ export default async function createViteTemplate(appName: string, language: stri
         })
 
         // todo: edit package.json to set the app name and description
+        editFile('package.json', (content) => {
+            const packageJson: PackageJson = JSON.parse(content)
+            // check for white spaces and replace them with -
+            const name = appName.replace(/\s/g, '-')
+            packageJson.name = name
+            return JSON.stringify(packageJson, null, 2)
+        })
+        chalkGreen(`package.json updated successfully`)
 
         // clear readme.md and add my custom readme
         editFile('README.md', () => readMe())
@@ -26,6 +35,10 @@ export default async function createViteTemplate(appName: string, language: stri
 
         const extension = ts ? 'ts' : 'js'
         const jsxExtension = `${extension}x`
+
+        // edit App.jsx to set the app name and extension
+        // editFile('src/App.' + jsxExtension, (content) => app(appName))
+        // chalkGreen(`App.${extension} updated successfully`)
 
         return true
     })
@@ -35,3 +48,12 @@ export default async function createViteTemplate(appName: string, language: stri
 
 // my readme.md in markdown language
 const readMe = () => ``
+
+const app = (appName: string) =>
+    `export default function createViteTemplate() {
+  return (
+    <h1>
+      ${appName}
+    </h1>
+  )
+}`
