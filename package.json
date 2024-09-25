@@ -29,6 +29,7 @@
     "typescript-eslint": "^8.7.0"
   },
   "dependencies": {
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "inquirer": "^11.0.2"
   }
 }
