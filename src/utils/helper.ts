@@ -1,7 +1,8 @@
-import { readFileSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { CheerioAPI, load } from 'cheerio'
+
 import { DevDependency, ModifiedData, PackageJson } from './types'
 import { chalkGreen, chalkRed } from '../Chalk'
-import { CheerioAPI, load } from 'cheerio'
 
 export const tryCatch = <T>(callback: () => T | Promise<T>): [Error | null, T | null] => {
     let resolvedValue: [Error | null, T | null] = [null, null]
@@ -49,6 +50,18 @@ export function editHtmlFileDom(filePath: string, callback: (data: CheerioAPI) =
 
     if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
     if (data) return chalkGreen(`${filePath} updated successfully`)
+}
+
+// todo: add react serializer
+// todo: use react serializer to edit react files
+export function editReactFiles(filePath: string, content: string) {
+    const [error, data] = tryCatch(() => {
+        // if file doesnt exist create one
+        if (!existsSync(filePath.toLowerCase())) writeFileSync(filePath, '')
+        editFile(filePath, () => content)
+    })
+
+    if (error) chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
 }
 
 export function addPackage(dependency: string, version: string = 'latest', devDependencies: DevDependency[]) {
