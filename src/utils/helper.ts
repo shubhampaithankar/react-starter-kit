@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
-import { ModifiedData } from './types'
+import { DevDependency, ModifiedData } from './types'
+import { chalkGreen, chalkRed } from '../Chalk'
 
 export const tryCatch = <T>(callback: () => T | Promise<T>): [Error | null, T | null] => {
     let resolvedValue: [Error | null, T | null] = [null, null]
@@ -25,14 +26,40 @@ export const tryCatch = <T>(callback: () => T | Promise<T>): [Error | null, T | 
 }
 
 export function editFile(filePath: string, callback: (data: string) => ModifiedData) {
-    const [error] = tryCatch(() => {
+    const [error, data] = tryCatch(() => {
         const data = readFileSync(filePath, 'utf-8')
         const modifiedData = callback(data)
         writeFileSync(filePath, modifiedData, 'utf-8')
     })
 
-    if (error) {
-        console.log(`There was an error in ${arguments.callee.name}`, error)
-        return
-    }
+    if (error) chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
+}
+
+export async function addPackage(
+    dependency: string,
+    version: string | undefined = 'latest',
+    devDependencies: DevDependency[]
+) {
+    const [error, data] = tryCatch(() => {
+        editFile('package.json', (content) => {
+            const packageJson = JSON.parse(content)
+
+            // Ensure the dependency type exists
+            if (!packageJson['dependencies']) packageJson['dependencies'] = {}
+            if (!packageJson['devDependencies']) packageJson['devDependencies'] = {}
+
+            // Add the dependency
+            packageJson['dependencies'][dependency] = version
+
+            // Add the dev dependencies
+            devDependencies.forEach(({ dev, version }) => {
+                packageJson['devDependencies'][dev] = version
+            })
+
+            return JSON.stringify(packageJson, null, 2)
+        })
+    })
+
+    if (error) return chalkRed(`There was an error in ${arguments.callee.name}, ${error}`)
+    if (data) return chalkGreen(`Dependency ${dependency}@${version} added to package.json successfully`)
 }

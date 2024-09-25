@@ -5,3 +5,8 @@ export type Question = BuiltInQuestion & {
 }
 
 export type ModifiedData = NodeJS.ArrayBufferView | string
+
+export type DevDependency = {
+    dev: string
+    version: string
+}
