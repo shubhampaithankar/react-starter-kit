@@ -4,8 +4,8 @@ const cssFramework: Question = {
     name: 'cssFramework',
     type: 'list',
     message: 'Select a CSS framework:',
-    choices: ['Tailwind', 'Bootstrap', 'Vanilla'],
-    default: 'Vanilla',
+    choices: ['Tailwind', 'Bootstrap', 'None'],
+    default: 'None',
 }
 
 export default cssFramework

@@ -35,21 +35,17 @@ export default async function createViteTemplate(appName: string, language: stri
         await editFile('README.md', () => '')
 
         /* Make changes in src directory */
-        await process.chdir('src')
-
         // edit App.jsx to set the app name and extension
-        await editReactFiles(`App.${jsxExtension}`, app(appName))
+        await editReactFiles(`src/App.${jsxExtension}`, app(appName))
 
         // delete App.css
-        await deleteFile('App.css')
+        await deleteFile('src/App.css')
 
-        await deleteFile('assets/react.svg')
+        // delete assets/react.svg
+        await deleteFile('src/assets/react.svg')
 
         // clear index.css
-        await editFile('index.css', () => '')
-
-        /* once done making changes in src directory go back*/
-        process.chdir('..')
+        await editFile('src/index.css', () => '')
 
         return true
     })
@@ -59,7 +55,7 @@ export default async function createViteTemplate(appName: string, language: stri
 }
 
 // my readme.md in markdown language
-const readMe = () => ``
+const readMe = ``
 
 const app = (appName: string) => `export default function createViteTemplate() {
   return (
