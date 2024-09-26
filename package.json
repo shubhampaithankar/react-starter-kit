@@ -4,10 +4,11 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf ./dist && tsc",
+    "build": "npm run remove-files && tsc",
     "dev": "node --watch -r ts-node/register index.ts",
     "start": "npm run build && node -r ts-node/register index.ts",
-    "lint": "eslint"
+    "lint": "eslint",
+    "remove-files": "rimraf ./my-app && rimraf ./dist"
   },
   "keywords": [],
   "author": "",
