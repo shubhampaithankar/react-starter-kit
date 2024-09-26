@@ -4,7 +4,7 @@ import { chalkGreen, chalkRed } from '../Chalk'
 import { PackageJson } from '../utils/types'
 
 export default async function createViteTemplate(appName: string, language: string) {
-    const [error, done] = tryCatch(async () => {
+    const [error, done] = await tryCatch(async () => {
         const ts = language === 'TypeScript'
         const viteTemplate = ts ? 'template-react-ts' : 'template-react'
 
@@ -18,12 +18,12 @@ export default async function createViteTemplate(appName: string, language: stri
         const jsxExtension = `${extension}x`
 
         // edit title in index.html to set it to the app name
-        editHtmlFileDom('index.html', ($) => {
+        await editHtmlFileDom('index.html', ($) => {
             $('title').text(appName)
         })
 
         // edit package.json to set the app name and description
-        editFile('package.json', (content) => {
+        await editFile('package.json', (content) => {
             const packageJson: PackageJson = JSON.parse(content)
             // check for white spaces and replace them with -
             const name = appName.replace(/\s/g, '-')
@@ -32,19 +32,21 @@ export default async function createViteTemplate(appName: string, language: stri
         })
 
         // clear readme.md and add my custom readme
-        editFile('README.md', () => '')
+        await editFile('README.md', () => '')
 
         /* Make changes in src directory */
-        process.chdir('src')
+        await process.chdir('src')
 
         // edit App.jsx to set the app name and extension
-        editReactFiles(`App.${jsxExtension}`, app(appName))
+        await editReactFiles(`App.${jsxExtension}`, app(appName))
 
         // delete App.css
-        deleteFile('App.css')
+        await deleteFile('App.css')
+
+        await deleteFile('assets/react.svg')
 
         // clear index.css
-        editFile('index.css', () => '')
+        await editFile('index.css', () => '')
 
         /* once done making changes in src directory go back*/
         process.chdir('..')
@@ -52,7 +54,8 @@ export default async function createViteTemplate(appName: string, language: stri
         return true
     })
 
-    if (error) return chalkRed(`There was an error in ${arguments.callee.name}`, error)
+    if (error) return chalkRed(`There was an error in createViteTemplate`, error)
+    return new Promise((resolve, reject) => resolve(chalkGreen(`Vite React created successfully`)))
 }
 
 // my readme.md in markdown language
