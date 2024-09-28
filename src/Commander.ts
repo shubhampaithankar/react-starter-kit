@@ -1,14 +1,13 @@
 import { Command } from 'commander'
-import { action } from './Actions'
+import Actions, { action } from './Actions'
 import { chalkBlue, chalkRed } from './utils/chalk'
-import { createViteTemplate, installBootstrap } from './actions/'
+import { createViteTemplate, installBootstrap, installTailwind } from './actions/'
 import { tryCatch } from './utils/helper'
+import { Prompt } from './Loader'
 
 export default class Commader extends Command {
-    appName: string = ''
     constructor() {
         super()
-        this.appName = 'my-app'
     }
 
     async init() {
@@ -27,6 +26,7 @@ export default class Commader extends Command {
                     if (cssFramework !== 'None') {
                         switch (cssFramework) {
                             case 'Tailwind':
+                                await installTailwind(appName, language)
                                 break
 
                             case 'Bootstrap':
@@ -36,12 +36,10 @@ export default class Commader extends Command {
                                 break
                         }
                     }
-
-                    this.appName = appName
                 })
             return true
         })
-        if (error) return chalkRed('There was an error in Commander.init()')
+        if (error) return chalkRed('There was an error in Commander.init()', error)
         // if (done) return chalkGreen(`cd ${this.appName} && npm install`)
     }
 }

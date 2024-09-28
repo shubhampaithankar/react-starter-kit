@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'fs'
 import { CheerioAPI, load } from 'cheerio'
 
 import { ModifiedData, PackageJson } from './types'
@@ -14,6 +14,27 @@ export const tryCatch = async <T>(callback: () => T | Promise<T>): Promise<[Erro
     }
 }
 
+export async function createFile(filePath: string, callback: () => string | Promise<string>) {
+    const [error, done] = await tryCatch(async () => {
+        const data = await callback()
+        writeFileSync(filePath, data, 'utf-8')
+        return true
+    })
+
+    if (error) return chalkRed(`There was an error in createFile`, error)
+    if (done) return chalkGreen(`${filePath} created successfully`)
+}
+
+export async function renameFile(filePath: string, callback: () => string | Promise<string>) {
+    const [error, done] = await tryCatch(async () => {
+        renameSync(filePath, await callback())
+        return true
+    })
+
+    if (error) return chalkRed(`There was an error in renameFile`, error)
+    if (done) return chalkGreen(`${filePath} renamed successfully`)
+}
+
 export async function editFile(filePath: string, callback: (data: string) => ModifiedData | Promise<ModifiedData>) {
     const [error, done] = await tryCatch(async () => {
         const data = readFileSync(filePath, 'utf-8')
@@ -23,7 +44,7 @@ export async function editFile(filePath: string, callback: (data: string) => Mod
     })
 
     if (error) return chalkRed(`There was an error in editFile`, error)
-    return chalkGreen(`${filePath} edited successfully`)
+    if (done) return chalkGreen(`${filePath} edited successfully`)
 }
 
 // delete file if it exists
@@ -34,7 +55,7 @@ export async function deleteFile(filePath: string) {
     })
 
     if (error) return chalkRed(`There was an error in deleteFile`, error)
-    return chalkGreen(`${filePath} deleted successfully`)
+    if (done) return chalkGreen(`${filePath} deleted successfully`)
 }
 
 // edit html dom
@@ -50,7 +71,7 @@ export async function editHtmlFileDom(filePath: string, callback: (data: Cheerio
     })
 
     if (error) return chalkRed(`There was an error in editHtmlFileDom`, error)
-    return chalkGreen(`${filePath} edited successfully`)
+    if (done) return chalkGreen(`${filePath} edited successfully`)
 }
 
 // todo: add react serializer
@@ -65,6 +86,18 @@ export async function editReactFiles(filePath: string, content: string) {
     if (error) return chalkRed(`There was an error in editReactFiles`, error)
 }
 
+// run commands on terminal
+export async function execCommand(command: string) {
+    const [error, done] = await tryCatch(() => {
+        // get package and its latest version
+        const data = execSync(command).toString()
+        return data
+    })
+
+    if (error) return error
+    if (done) return done
+}
+
 // add package to package.json
 export async function addPackage(dependency: string, devDependencies?: string[]) {
     const [error, done] = await tryCatch(async () => {
@@ -75,18 +108,20 @@ export async function addPackage(dependency: string, devDependencies?: string[])
             if (!packageJson['dependencies']) packageJson['dependencies'] = {}
             if (!packageJson['devDependencies']) packageJson['devDependencies'] = {}
 
-            const version = await getPackageInfo(dependency)
+            let version = await execCommand(`npm view ${dependency} version`)
             if (typeof version !== 'string') throw new Error(`${dependency} is not a valid dependency`)
+            version = version.trim()
 
             // Add the dependency
             packageJson['dependencies'][dependency] = version
 
             // // Add the dev dependencies
-            devDependencies?.forEach((dev) => {
-                const v = getPackageInfo(dev)
+            for (const dev of devDependencies || []) {
+                let v = await execCommand(`npm view ${dev} version`)
                 if (typeof v !== 'string') throw new Error(`${dev} is not a valid dev dependency`)
+                v = v.trim()
                 packageJson['devDependencies']![dev] = v
-            })
+            }
 
             return JSON.stringify(packageJson, null, 2)
         })
@@ -94,17 +129,5 @@ export async function addPackage(dependency: string, devDependencies?: string[])
     })
 
     if (error) return chalkRed(`There was an error in addPackage`, error)
-    return chalkGreen(`Dependency ${dependency} added to package.json successfully`)
-}
-
-// get dep and its version
-export async function getPackageInfo(dependency: string) {
-    const [error, done] = await tryCatch(() => {
-        // get package and its latest version
-        const data = execSync(`npm view ${dependency} version`).toString().trim()
-        return data
-    })
-
-    if (error) return error
-    return done
+    if (done) return chalkGreen(`Dependency ${dependency} added to package.json successfully`)
 }
