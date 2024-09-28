@@ -2,12 +2,10 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { CheerioAPI, load } from 'cheerio'
 
 import { ModifiedData, PackageJson } from './types'
-import { chalkGreen, chalkRed } from '../Chalk'
+import { chalkGreen, chalkRed } from './chalk'
 import { execSync } from 'child_process'
 
 export const tryCatch = async <T>(callback: () => T | Promise<T>): Promise<[Error | null, T | null]> => {
-    let resolvedValue: [Error | null, T | null] = [null, null]
-
     try {
         const result = await callback()
         return [null, result as T]

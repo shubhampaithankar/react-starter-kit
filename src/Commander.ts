@@ -1,6 +1,6 @@
 import { Command } from 'commander'
 import { action } from './Actions'
-import { chalkBlue, chalkGreen, chalkRed } from './Chalk'
+import { chalkBlue, chalkRed } from './utils/chalk'
 import { createViteTemplate, installBootstrap } from './actions/'
 import { tryCatch } from './utils/helper'
 

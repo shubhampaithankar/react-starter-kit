@@ -1,4 +1,4 @@
-import { chalkRed } from '../../Chalk'
+import { chalkRed } from '../../utils/chalk'
 import { addPackage, editFile, tryCatch } from '../../utils/helper'
 
 export default async function installBootstrap(appName: string) {

@@ -1,6 +1,6 @@
 import degit from 'degit'
 import { editHtmlFileDom, tryCatch, editFile, editReactFiles, deleteFile } from '../utils/helper'
-import { chalkGreen, chalkRed } from '../Chalk'
+import { chalkGreen, chalkRed } from '../utils/chalk'
 import { PackageJson } from '../utils/types'
 
 export default async function createViteTemplate(appName: string, language: string) {
