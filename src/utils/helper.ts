@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } from 'fs'
 import { CheerioAPI, load } from 'cheerio'
 
 import { ModifiedData, PackageJson } from './types'
@@ -52,6 +52,17 @@ export async function deleteFile(filePath: string) {
     const [error, done] = await tryCatch(() => {
         if (!existsSync(filePath.toLowerCase())) throw new Error('File does not exist')
         else unlinkSync(filePath)
+    })
+
+    if (error) return chalkRed(`There was an error in deleteFile`, error)
+    if (done) return chalkGreen(`${filePath} deleted successfully`)
+}
+
+// delete folder if it exists
+export async function deleteFolder(filePath: string) {
+    const [error, done] = await tryCatch(() => {
+        if (!existsSync(filePath.toLowerCase())) throw new Error('File does not exist')
+        else rmSync(filePath, { force: true })
     })
 
     if (error) return chalkRed(`There was an error in deleteFile`, error)
