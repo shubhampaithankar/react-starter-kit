@@ -1,9 +1,8 @@
 import { Command } from 'commander'
-import Actions, { action } from './Actions'
+import { action } from './Actions'
 import { chalkBlue, chalkRed } from './utils/chalk'
-import { createViteTemplate, installBootstrap, installTailwind } from './actions/'
+import { createNextTemplate, createViteTemplate, installBootstrap, installTailwind } from './actions/'
 import { tryCatch } from './utils/helper'
-import { Prompt } from './Loader'
 
 export default class Commader extends Command {
     constructor() {
@@ -17,25 +16,32 @@ export default class Commader extends Command {
                 .description('CLI to automate react project development with support for additional dependacies')
                 .action(async () => {
                     const answers = await action()
-                    const { appName, language, cssFramework } = answers
+                    const { appName, language, cssFramework, ssr } = answers
 
                     // Create vite template
-                    chalkBlue(`Pulling vite app with name ${appName} in ${language}`)
-                    await createViteTemplate(appName, language)
+                    if (!ssr) {
+                        chalkBlue(`Pulling vite app with name ${appName} in ${language}`)
+                        await createViteTemplate(appName, language)
+                        if (cssFramework !== 'None') {
+                            switch (cssFramework) {
+                                case 'Tailwind':
+                                    await installTailwind(appName, language)
+                                    break
 
-                    if (cssFramework !== 'None') {
-                        switch (cssFramework) {
-                            case 'Tailwind':
-                                await installTailwind(appName, language)
-                                break
-
-                            case 'Bootstrap':
-                                await installBootstrap(appName)
-                                break
-                            default:
-                                break
+                                case 'Bootstrap':
+                                    await installBootstrap(appName)
+                                    break
+                                default:
+                                    break
+                            }
                         }
+
+                        return
                     }
+
+                    // Create next templte
+                    chalkBlue(`Pulling next app with name ${appName} in ${language}`)
+                    await createNextTemplate(appName, language, cssFramework === 'Tailwind')
                 })
             return true
         })

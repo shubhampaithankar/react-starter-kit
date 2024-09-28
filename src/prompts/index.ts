@@ -1,3 +1,4 @@
+import ssr from './ssr'
 import appName from './appName'
 import language from './language'
 import cssFramework from './cssFramework'
@@ -6,4 +7,4 @@ import tanStack from './tanStack'
 import redux from './redux'
 import hooks from './hooks'
 
-export { appName, language, cssFramework, testing, tanStack, redux, hooks }
+export { ssr, appName, language, cssFramework, testing, tanStack, redux, hooks }

@@ -1,4 +1,6 @@
 import inquirer from 'inquirer'
-import { appName, language, cssFramework } from './prompts'
+import Commader from './Commander'
+import { appName, language, cssFramework, ssr } from './prompts'
+import { tryCatch } from './utils/helper'
 
-export const action = async () => await inquirer.prompt([appName, language, cssFramework])
+export const action = async () => await inquirer.prompt([ssr, appName, language, cssFramework])
