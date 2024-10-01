@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import { action } from './Actions'
+import { action } from './Action'
 import { chalkBlue, chalkRed } from './utils/chalk'
 import { createNextTemplate, createViteTemplate, installBootstrap, installTailwind } from './actions/'
 import { tryCatch } from './utils/helper'
