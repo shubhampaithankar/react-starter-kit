@@ -1,12 +1,14 @@
 import { Command } from 'commander'
-import { action } from './Action'
+import Action, { action } from './Action'
 import { chalkBlue, chalkRed } from './utils/chalk'
 import { createNextTemplate, createViteTemplate, installBootstrap, installTailwind } from './actions/'
 import { tryCatch } from './utils/helper'
 
 export default class Commader extends Command {
+    actions: Action
     constructor() {
         super()
+        this.actions = new Action(this)
     }
 
     async init() {
@@ -14,6 +16,7 @@ export default class Commader extends Command {
             super
                 .version('0.0.1')
                 .description('CLI to automate react project development with support for additional dependacies')
+
                 .action(async () => {
                     const answers = await action()
                     const { appName, language, cssFramework, ssr } = answers
