@@ -15,7 +15,7 @@ export default class Commader extends Command {
         const [error, done] = await tryCatch(() => {
             super
                 .version('0.0.1')
-                .description('CLI to automate react project development with support for additional dependacies')
+                .description('CLI to automate react project development with support for additional dependencies')
 
                 .action(async () => {
                     const answers = await action()
